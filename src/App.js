@@ -1,24 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { Container } from "react-bootstrap";
+import Header from "./components/header/Header";
+import Sidebar from "./components/sidebar/Sidebar";
+import HomeScreen from "./screens/homeScreen/HomeScreen";
+import LoginScreen from "./screens/loginScreen/LoginScreen";
+import './_app.scss';
+import { BrowserRouter as Router, Redirect, Switch,} from "react-router-dom";
+import NotFound from "./components/notFound/NotFound";
+// Layout
+const Layout = ({children}) => {
+  const [sidebar, setSidebar] = useState(false);
+  const handleToggleSidebar = ()=>{
+    setSidebar(value => !value);
+  }
+  return(
+    <>
+      <Header handleToggleSidebar={handleToggleSidebar}/>
+      <div className="app__container">
+        <Sidebar
+          sidebar={sidebar}
+          handleToggleSidebar={handleToggleSidebar}
+        />
+        <Container fluid className="app__main">
+            {children}
+        </Container>
+      </div>
+    </>
+  )
+}
 
-function App() {
+// App
+const App = ()=> {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Switch>
+        <Router path='/' exact>
+          <Layout>
+            <HomeScreen />
+          </Layout>
+        </Router>
+
+        <Router path='/auth'>
+            <LoginScreen/>
+        </Router>
+
+        <Router path="/search">
+          <Layout>
+            <h1>Search</h1>
+          </Layout>
+        </Router>
+
+        <Router>
+            <Redirect to='/404' />
+            <NotFound />
+         </Router>
+
+    </Switch>
   );
 }
 
